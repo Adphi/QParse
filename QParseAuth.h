@@ -27,7 +27,9 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 
-#include "QParse.h"
+#include <QParseObject.h>
+#include <QParse.h>
+#include <QParseUser.h>
 
 
 class QParseAuth : public QObject
@@ -41,12 +43,17 @@ public:
     Q_INVOKABLE void signIn(const QString& name, const QString& password);
     Q_INVOKABLE void signOut();
     Q_INVOKABLE void signUp(const QString& name, const QString& email, const QString& password, const QString& phoneNumber);
+
     Q_PROPERTY(bool signedIn READ signedIn NOTIFY signedInChanged)
+    Q_PROPERTY(QParseUser user READ user NOTIFY userChanged)
 
     bool signedIn() const;
 
+    QParseUser *user() const;
+
 signals:
     void signedInChanged(bool signedIn);
+    void userChanged(QParseUser* user);
 
 public slots:
 
@@ -56,6 +63,7 @@ private:
     // Auth State
     bool mSignedIn = false;
     QString mToken;
+    QParseUser *mUser;
     bool mIsAuthenticating = false;
 
     QParse *mParse;

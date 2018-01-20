@@ -1,6 +1,6 @@
 /*****************************************************************************
  *
- * QParseTest.cpp
+ * QParseObject.cpp
  *
  * Created: 20 2018 by Philippe-Adrien
  *
@@ -20,45 +20,48 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#include "QParseUser.h"
+#include "QParseObject.h"
 
-QParseUser::QParseUser(QObject *parent) : QParseObject(parent)
+QParseObject::QParseObject(QObject *parent) : QObject(parent)
 {
 
 }
 
-QParseUser::QParseUser(const QString &username, const QString &email, const QString &phone, QObject *parent)
-    : QParseObject(parent), mUsername(username), mEmail(email), mPhone(phone)
+QString QParseObject::objectId() const
 {
-
+    return mObjectId;
 }
 
-QString QParseUser::username() const
+void QParseObject::setObjectId(const QString &objectId)
 {
-    return mUsername;
+    mObjectId = objectId;
 }
 
-void QParseUser::setUsername(const QString &name)
+QDateTime QParseObject::updatedAt() const
 {
-    mUsername = name;
+    return mUpdatedAt;
 }
 
-QString QParseUser::email() const
+void QParseObject::setUpdatedAt(const QDateTime &updatedAt)
 {
-    return mEmail;
+    mUpdatedAt = updatedAt;
 }
 
-void QParseUser::setEmail(const QString &email)
+QDateTime QParseObject::createdAt() const
 {
-    mEmail = email;
+    return mCreatedAt;
 }
 
-QString QParseUser::phone() const
+void QParseObject::setCreatedAt(const QDateTime &createdAt)
 {
-    return mPhone;
+    mCreatedAt = createdAt;
 }
 
-void QParseUser::setPhone(const QString &phone)
-{
-    mPhone = phone;
-}
+//QParseObject* QParseObject::fromJson(const QJsonObject &jsonObject, QObject *parent)
+//{
+//    QParseObject *object = new QParseObject(parent);
+//    object->mCreatedAt = QDateTime::fromString(jsonObject["createdAt"].toString(), Qt::ISODateWithMs);
+//    object->mUpdatedAt = QDateTime::fromString(jsonObject["updatedAt"].toString(), Qt::ISODateWithMs);
+//    object->mObjectId = jsonObject["objectId"].toString();
+//    return object;
+//}

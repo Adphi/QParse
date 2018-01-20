@@ -23,17 +23,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-	QParse.cpp \
-    QParseFile.cpp \
-    QParseAuth.cpp \
-    QParseUser.cpp
+	$$PWD/QParse.cpp \
+    $$PWD/QParseFile.cpp \
+    $$PWD/QParseAuth.cpp \
+    $$PWD/QParseObject.cpp \
+    $$PWD/QtPropertySerializer.cpp \
+    $$PWD/QParseUser.cpp
 
 HEADERS += \
-	QParse.h \
-	qparse_global.h \
-    QParseFile.h \
-    QParseAuth.h \
-    QParseUser.h
+	$$PWD/QParse.h \
+	$$PWD/qparse_global.h \
+    $$PWD/QParseFile.h \
+    $$PWD/QParseAuth.h \
+    $$PWD/QParseObject.h \
+    $$PWD/Utils.h \
+    $$PWD/QtPropertySerializer.h \
+    $$PWD/QParseUser.h
 
 unix {
     target.path = /usr/lib

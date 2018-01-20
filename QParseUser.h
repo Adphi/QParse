@@ -1,6 +1,6 @@
 /*****************************************************************************
  *
- * QParseUser.h
+ * QParseTest.h
  *
  * Created: 20 2018 by Philippe-Adrien
  *
@@ -20,20 +20,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#ifndef QPARSEUSER_H
-#define QPARSEUSER_H
+#ifndef QPARSETEST_H
+#define QPARSETEST_H
 
-#include <QObject>
+#include <QParseObject.h>
+#include <QDebug>
 
-class QParseUser : public QObject
+class QParseUser : public QParseObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged)
+    Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
+    Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
+
 public:
     explicit QParseUser(QObject *parent = nullptr);
+    QParseUser(const QString &username, const QString &email, const QString &phone, QObject *parent = nullptr);
+
+    QString username() const;
+    void setUsername(const QString &username);
+
+    QString email() const;
+    void setEmail(const QString &email);
+
+    QString phone() const;
+    void setPhone(const QString &phone);
 
 signals:
+    void usernameChanged(QString username);
+    void emailChanged(QString email);
+    void phoneChanged(QString phone);
 
 public slots:
+
+private:
+    QString mUsername;
+    QString mEmail;
+    QString mPhone;
 };
 
-#endif // QPARSEUSER_H
+//QDebug operator<<(QDebug debug, const QParseUser &u)
+//{
+//    QDebugStateSaver saver(debug);
+//    debug << '(' << u.username() << ", " << u.email() << u.objectId() << ')';
+
+//    return debug;
+//}
+#endif // QPARSETEST_H

@@ -1,6 +1,6 @@
 /*****************************************************************************
  *
- * QParseTest.cpp
+ * QParseObject.h
  *
  * Created: 20 2018 by Philippe-Adrien
  *
@@ -20,45 +20,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#include "QParseUser.h"
+#ifndef QPARSEOBJECT_H
+#define QPARSEOBJECT_H
 
-QParseUser::QParseUser(QObject *parent) : QParseObject(parent)
+#include <QObject>
+#include <QDateTime>
+
+class QParseObject : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QString objectId READ objectId WRITE setObjectId NOTIFY objectIdChanged)
+    Q_PROPERTY(QDateTime createdAt READ createdAt WRITE setCreatedAt NOTIFY createdAtChanged)
+    Q_PROPERTY(QDateTime updatedAt READ updatedAt WRITE setUpdatedAt NOTIFY updatedAtChanged)
 
-}
+public:
+    explicit QParseObject(QObject *parent = nullptr);
 
-QParseUser::QParseUser(const QString &username, const QString &email, const QString &phone, QObject *parent)
-    : QParseObject(parent), mUsername(username), mEmail(email), mPhone(phone)
-{
+    QString objectId() const;
+    void setObjectId(const QString &objectId);
 
-}
+    QDateTime updatedAt() const;
+    void setUpdatedAt(const QDateTime &updatedAt);
 
-QString QParseUser::username() const
-{
-    return mUsername;
-}
+    QDateTime createdAt() const;
+    void setCreatedAt(const QDateTime &createdAt);
 
-void QParseUser::setUsername(const QString &name)
-{
-    mUsername = name;
-}
+signals:
+    void objectIdChanged();
+    void createdAtChanged();
+    void updatedAtChanged();
 
-QString QParseUser::email() const
-{
-    return mEmail;
-}
+public slots:
 
-void QParseUser::setEmail(const QString &email)
-{
-    mEmail = email;
-}
+protected:
+    QString mObjectId;
+    QDateTime mUpdatedAt;
+    QDateTime mCreatedAt;
+};
 
-QString QParseUser::phone() const
-{
-    return mPhone;
-}
-
-void QParseUser::setPhone(const QString &phone)
-{
-    mPhone = phone;
-}
+#endif // QPARSEOBJECT_H

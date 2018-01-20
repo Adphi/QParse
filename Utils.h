@@ -1,6 +1,6 @@
 /*****************************************************************************
  *
- * QParseTest.cpp
+ * Utils.h
  *
  * Created: 20 2018 by Philippe-Adrien
  *
@@ -20,45 +20,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#include "QParseUser.h"
+#ifndef UTILS_H
+#define UTILS_H
 
-QParseUser::QParseUser(QObject *parent) : QParseObject(parent)
+#include <QDebug>
+#include <QMetaProperty>
+
+#include <vector>
+#include <utility>
+#include <algorithm>
+
+static void dump_props(QObject *o)
 {
-
+  auto mo = o->metaObject();
+  qDebug() << "## Properties of" << o << "##";
+  do {
+    qDebug() << "### Class" << mo->className() << "###";
+    std::vector<std::pair<QString, QVariant> > v;
+    v.reserve(mo->propertyCount() - mo->propertyOffset());
+    for (int i = mo->propertyOffset(); i < mo->propertyCount();
+          ++i)
+      v.emplace_back(mo->property(i).name(),
+                     mo->property(i).read(o));
+    std::sort(v.begin(), v.end());
+    for (auto &i : v)
+      qDebug() << i.first << "=>" << i.second;
+  } while ((mo = mo->superClass()));
 }
 
-QParseUser::QParseUser(const QString &username, const QString &email, const QString &phone, QObject *parent)
-    : QParseObject(parent), mUsername(username), mEmail(email), mPhone(phone)
-{
-
-}
-
-QString QParseUser::username() const
-{
-    return mUsername;
-}
-
-void QParseUser::setUsername(const QString &name)
-{
-    mUsername = name;
-}
-
-QString QParseUser::email() const
-{
-    return mEmail;
-}
-
-void QParseUser::setEmail(const QString &email)
-{
-    mEmail = email;
-}
-
-QString QParseUser::phone() const
-{
-    return mPhone;
-}
-
-void QParseUser::setPhone(const QString &phone)
-{
-    mPhone = phone;
-}
+#endif // UTILS_H
