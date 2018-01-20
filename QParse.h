@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QException>
+#include <QNetworkRequest>
 #include <QDebug>
 
 class QParse : public QObject
@@ -46,14 +47,12 @@ public:
     QParse* apiKey(const QByteArray& apiKey);
 
     QByteArray url() const;
-
     QByteArray appId() const;
-
     QByteArray apiKey() const;
-
     bool revocableSession() const;
 
     QSettings* settings() const;
+    QNetworkRequest request(const QByteArray& path) const;
 
 signals:
 

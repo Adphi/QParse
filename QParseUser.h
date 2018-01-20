@@ -2,7 +2,7 @@
  *
  * QParseUser.h
  *
- * Created: 19 2018 by Philippe-Adrien
+ * Created: 20 2018 by Philippe-Adrien
  *
  * Copyright 2018 Philippe-Adrien. All rights reserved.
  *
@@ -24,45 +24,16 @@
 #define QPARSEUSER_H
 
 #include <QObject>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-
-#include "QParse.h"
-
 
 class QParseUser : public QObject
 {
     Q_OBJECT
-    //Q_PROPERTY(bool signedIn READ signedIn NOTIFY signInChanged)
-
 public:
     explicit QParseUser(QObject *parent = nullptr);
-    Q_INVOKABLE void signIn(const QString& name, const QString& password);
-    Q_INVOKABLE void signOut();
-    Q_INVOKABLE bool isSignedIn() const;
 
 signals:
-    void signedIn();
-    void signedOut();
 
 public slots:
-
-
-private:
-    // Auth State
-    bool mSignedIn = false;
-    QString mToken;
-
-    QParse *mParse;
-    QNetworkAccessManager *mManager;
-
-    // Path
-    static QByteArray SIGN_UP;
-    static QByteArray LOGIN;
-    static QByteArray LOGOUT;
-    static QByteArray VERIFICATION_EMAIL_REQUEST;
-    static QByteArray REQUEST_PASSWORD_RESET;
-    static QByteArray USERS;
 };
 
 #endif // QPARSEUSER_H

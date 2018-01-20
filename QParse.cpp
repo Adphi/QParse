@@ -61,6 +61,15 @@ QSettings* QParse::settings() const
     return mSettings;
 }
 
+QNetworkRequest QParse::request(const QByteArray &path) const
+{
+    QUrl url(mUrl + path);
+    QNetworkRequest request(url);
+    request.setRawHeader(QParse::APP_ID, mAppId);
+    request.setRawHeader(QParse::REST_API_KEY, mApiKey);
+    return request;
+}
+
 bool QParse::revocableSession() const
 {
     return mRevocableSession;
