@@ -69,6 +69,8 @@ private:
     QParse *mParse;
     QNetworkAccessManager *mManager;
 
+    void retrieveSession();
+
     // Path
     static QByteArray SIGN_UP;
     static QByteArray LOGIN;
@@ -76,6 +78,7 @@ private:
     static QByteArray VERIFICATION_EMAIL_REQUEST;
     static QByteArray REQUEST_PASSWORD_RESET;
     static QByteArray USERS;
+    static QByteArray VALIDATE_SESSION;
 
     QNetworkReply *mReply = nullptr;
 };
