@@ -1,3 +1,4 @@
+
 # QParse
 
 ## A Qt Parse-SDK
@@ -27,8 +28,8 @@ TODO:
   - Response Format
   - Calling from Client Apps
 - Objects
-  - ~~Object Format~~
-  - Creating Objects
+  - ~~Object Format~~
+  - Creating Objects
   - Retrieving Objects
   - Updating Objects
   - Deleting Objects
@@ -45,9 +46,9 @@ TODO:
   - Distinct Queries
   - Aggregate Queries
 - Users
-  - ~~Signing Up~~
-  - ~~Logging In~~
-  - Verifying Emails
+  - ~~Signing Up~~
+  - ~~Logging In~~
+  - Verifying Emails
   - Requesting A Password Reset
   - Retrieving Users
   - Validating Session Tokens / Retrieving Current User
@@ -62,8 +63,8 @@ TODO:
   - Creating Sessions
   - Retrieving Sessions
   - Updating Sessions
-  - ~~Querying Sessions~~
-  - ~~Deleting Sessions
+  - ~~Querying Sessions~~
+  - ~~Deleting Sessions~~
   - Pairing Session with Installation
   - Session Security
 - Roles
