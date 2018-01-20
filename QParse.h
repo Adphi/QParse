@@ -26,6 +26,9 @@
 #include "qparse_global.h"
 
 #include <QObject>
+#include <QSettings>
+#include <QException>
+#include <QDebug>
 
 class QParse : public QObject
 {
@@ -34,10 +37,10 @@ public:
     static QByteArray APP_ID;
     static QByteArray REST_API_KEY;
     static QByteArray REVOCABLE_SESSION;
+    static QByteArray SESSION_TOKEN;
 
     static void initialize(const QByteArray& url, const QByteArray& appId, const QByteArray& apiKey, QObject *parent = nullptr);
-    static QParse* getInstance(QObject *parent = nullptr);
-    static QParse* getInstance(const QByteArray& url, const QByteArray& appId, const QByteArray& apiKey, QObject *parent = nullptr);
+    static QParse* getInstance();
     QParse* url(const QByteArray& url);
     QParse* appId(const QByteArray& appId);
     QParse* apiKey(const QByteArray& apiKey);
@@ -50,6 +53,8 @@ public:
 
     bool revocableSession() const;
 
+    QSettings* settings() const;
+
 signals:
 
 public slots:
@@ -60,10 +65,22 @@ private:
     Q_DISABLE_COPY(QParse)
     static QParse* sInstance;
 
+    QSettings* mSettings;
+
     QByteArray mUrl;
     QByteArray mAppId;
     QByteArray mApiKey;
     bool mRevocableSession;
+};
+
+class QParseInitializeException : public QException
+{
+public:
+    void raise() const {
+        qDebug() << "QParse not Initialized";
+        throw *this;
+    }
+    QParseInitializeException *clone() const { return new QParseInitializeException(*this); }
 };
 
 #endif // QPARSE_H

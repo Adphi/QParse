@@ -25,27 +25,22 @@
 QByteArray QParse::APP_ID = "X-Parse-Application-Id";
 QByteArray QParse::REST_API_KEY = "X-Parse-REST-API-Key";
 QByteArray QParse::REVOCABLE_SESSION = "X-Parse-Revocable-Session";
+QByteArray QParse::SESSION_TOKEN = "X-Parse-Session-Token";
 
 QParse *QParse::sInstance = nullptr;
 
 void QParse::initialize(const QByteArray &url, const QByteArray &appId, const QByteArray &apiKey, QObject *parent)
 {
     if(sInstance) return;
+    qDebug() << "Creating QParseClient Instance";
     sInstance = new QParse(url, appId, apiKey, parent);
 }
 
-QParse* QParse::getInstance(QObject *parent)
+QParse* QParse::getInstance()
 {
     if(!sInstance) {
-        sInstance = new QParse(parent);
-    }
-    return sInstance;
-}
-
-QParse* QParse::getInstance(const QByteArray &url, const QByteArray &appId, const QByteArray &apiKey, QObject *parent)
-{
-    if(!sInstance) {
-        sInstance = new QParse(url, appId, apiKey, parent);
+        QParseInitializeException exception;
+        exception.raise();
     }
     return sInstance;
 }
@@ -58,7 +53,12 @@ QParse::QParse(QObject *parent) : QObject(parent)
 QParse::QParse(const QByteArray &url, const QByteArray &appId, const QByteArray &apiKey, QObject *parent) :
     QObject(parent), mUrl(url), mAppId(appId), mApiKey(apiKey)
 {
+    mSettings = new QSettings(this);
+}
 
+QSettings* QParse::settings() const
+{
+    return mSettings;
 }
 
 bool QParse::revocableSession() const

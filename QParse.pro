@@ -25,13 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
 	QParse.cpp \
     QParseUser.cpp \
-    QParseFile.cpp
+    QParseFile.cpp \
+    QParseAuth.cpp
 
 HEADERS += \
 	QParse.h \
 	qparse_global.h \
     QParseUser.h \
-    QParseFile.h
+    QParseFile.h \
+    QParseAuth.h
 
 unix {
     target.path = /usr/lib
