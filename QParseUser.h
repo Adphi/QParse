@@ -58,7 +58,6 @@ private:
     QString mEmail;
     QString mPhone;
 };
-
 //QDebug operator<<(QDebug debug, const QParseUser &u)
 //{
 //    QDebugStateSaver saver(debug);

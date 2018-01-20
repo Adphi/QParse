@@ -51,12 +51,14 @@ QParseAuth::QParseAuth(QObject *parent) : QObject(parent)
 
 void QParseAuth::retrieveSession()
 {
+    mIsAuthenticating = true;
     auto request = mParse->request(VALIDATE_SESSION);
     request.setRawHeader(QParse::SESSION_TOKEN, mToken.toUtf8());
     mReply = mManager->get(request);
     connect(mReply, &QNetworkReply::finished, [&](){
         if(mReply->error()) {
             qDebug() << mReply->readAll();
+            mIsAuthenticating = false;
             return;
         }
         mUser = new QParseUser(this);
@@ -65,6 +67,8 @@ void QParseAuth::retrieveSession()
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
         qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
         mSignedIn = true;
+        mIsAuthenticating = false;
+        emit userChanged(mUser);
         emit signedInChanged(true);
         return;
     });
@@ -134,6 +138,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
         qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
         mReply->deleteLater();
         mIsAuthenticating = false;
+        emit userChanged(mUser);
         emit signedInChanged(true);
     });
 }
@@ -214,6 +219,7 @@ void QParseAuth::signUp(const QString &name, const QString &email, const QString
         mSignedIn = true;
         mIsAuthenticating = false;
         emit signedInChanged(true);
+        emit userChanged(mUser);
         mReply->deleteLater();
     });
 

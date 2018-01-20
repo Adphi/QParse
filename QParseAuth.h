@@ -31,21 +31,18 @@
 #include <QParse.h>
 #include <QParseUser.h>
 
-
 class QParseAuth : public QObject
 {
     Q_OBJECT
-    //Q_PROPERTY(bool signedIn READ signedIn NOTIFY signInChanged)
 
 public:
-
     Q_INVOKABLE static QParseAuth* getInstance(QObject *parent = nullptr);
     Q_INVOKABLE void signIn(const QString& name, const QString& password);
     Q_INVOKABLE void signOut();
     Q_INVOKABLE void signUp(const QString& name, const QString& email, const QString& password, const QString& phoneNumber);
 
     Q_PROPERTY(bool signedIn READ signedIn NOTIFY signedInChanged)
-    Q_PROPERTY(QParseUser user READ user NOTIFY userChanged)
+    Q_PROPERTY(QParseUser* user READ user NOTIFY userChanged)
 
     bool signedIn() const;
 
