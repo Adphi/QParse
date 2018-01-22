@@ -39,6 +39,7 @@ public:
     explicit QParseFile(QObject *parent = nullptr);
     QParseFile(const QString& name, const QByteArray& url, QObject *parent = nullptr);
     Q_INVOKABLE void upload(const QString& filePath);
+    Q_INVOKABLE void remove();
 
     QString name() const;
     void setName(const QString &name);

@@ -42,6 +42,7 @@ public:
     static QByteArray REST_API_KEY;
     static QByteArray REVOCABLE_SESSION;
     static QByteArray SESSION_TOKEN;
+    static QByteArray MASTER_KEY;
 
     static void initialize(const QByteArray& url, const QByteArray& appId, const QByteArray& apiKey, QObject *parent = nullptr);
     static QParse* getInstance();
@@ -56,6 +57,9 @@ public:
 
     QSettings* settings() const;
     QNetworkRequest request(const QByteArray& path) const;
+
+    QByteArray masterKey() const;
+    void setMasterKey(const QByteArray &masterKey);
 
 signals:
 
@@ -72,6 +76,7 @@ private:
     QByteArray mUrl;
     QByteArray mAppId;
     QByteArray mApiKey;
+    QByteArray mMasterKey;
     bool mRevocableSession;
 };
 

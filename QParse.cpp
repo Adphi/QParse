@@ -26,6 +26,7 @@ QByteArray QParse::APP_ID = "X-Parse-Application-Id";
 QByteArray QParse::REST_API_KEY = "X-Parse-REST-API-Key";
 QByteArray QParse::REVOCABLE_SESSION = "X-Parse-Revocable-Session";
 QByteArray QParse::SESSION_TOKEN = "X-Parse-Session-Token";
+QByteArray QParse::MASTER_KEY = "X-Parse-Master-Key";
 
 QParse *QParse::sInstance = nullptr;
 
@@ -65,6 +66,16 @@ QParse::QParse(const QByteArray &url, const QByteArray &appId, const QByteArray 
     QObject(parent), mUrl(url), mAppId(appId), mApiKey(apiKey)
 {
     mSettings = new QSettings(this);
+}
+
+QByteArray QParse::masterKey() const
+{
+    return mMasterKey;
+}
+
+void QParse::setMasterKey(const QByteArray &masterKey)
+{
+    mMasterKey = masterKey;
 }
 
 /**

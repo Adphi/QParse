@@ -75,6 +75,33 @@ void QParseFile::upload(const QString& filePath)
     file.close();
 }
 
+void QParseFile::remove()
+{
+    auto *parse = QParse::getInstance();
+    if(parse->masterKey().isNull()) {
+        qDebug() << "Only available with Parse master key";
+        return;
+    }
+    if(mName.isNull() || mName.isEmpty()) {
+        qDebug() << "Missing File Name";
+        return;
+    }
+    if(!mManager) mManager = new QNetworkAccessManager(this);
+    auto request = parse->request(FILE + "/" + mName.toUtf8());
+    request.setRawHeader(QParse::MASTER_KEY, parse->masterKey());
+    mManager->deleteResource(request);
+    connect(mManager, &QNetworkAccessManager::finished, [&](QNetworkReply *reply){
+        if(reply->error()) {
+            qDebug() << reply->errorString();
+            qDebug() << reply->readAll();
+            return;
+        }
+        qDebug() << reply->readAll();
+    });
+}
+
+
+
 QString QParseFile::name() const
 {
     return mName;
