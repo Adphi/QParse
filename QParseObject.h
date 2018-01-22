@@ -26,6 +26,9 @@
 #include <QObject>
 #include <QDateTime>
 
+/**
+ * @brief The QParseObject class
+ */
 class QParseObject : public QObject
 {
     Q_OBJECT

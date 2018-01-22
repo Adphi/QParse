@@ -31,6 +31,9 @@
 #include <QParse.h>
 #include <QParseUser.h>
 
+/**
+ * @brief The QParseAuth class
+ */
 class QParseAuth : public QObject
 {
     Q_OBJECT
@@ -40,16 +43,21 @@ public:
     Q_INVOKABLE void signIn(const QString& name, const QString& password);
     Q_INVOKABLE void signOut();
     Q_INVOKABLE void signUp(const QString& name, const QString& email, const QString& password, const QString& phoneNumber);
+    Q_INVOKABLE void requestVerificationEmail();
+    Q_INVOKABLE void requestPasswordReset(const QString& email);
 
-    Q_PROPERTY(bool signedIn READ signedIn NOTIFY signedInChanged)
+    Q_PROPERTY(bool isSignedIn READ isSignedIn NOTIFY signedInChanged)
     Q_PROPERTY(QParseUser* user READ user NOTIFY userChanged)
 
-    bool signedIn() const;
+    bool isSignedIn() const;
 
     QParseUser *user() const;
 
+
+    QString token() const;
+
 signals:
-    void signedInChanged(bool signedIn);
+    void signedInChanged(bool isSignedIn);
     void userChanged(QParseUser* user);
 
 public slots:
@@ -58,7 +66,7 @@ private:
     explicit QParseAuth(QObject *parent = nullptr);
     static QParseAuth *sInstance;
     // Auth State
-    bool mSignedIn = false;
+    bool mIsSignedIn = false;
     QString mToken;
     QParseUser *mUser;
     bool mIsAuthenticating = false;
@@ -70,8 +78,8 @@ private:
 
     // Path
     static QByteArray SIGN_UP;
-    static QByteArray LOGIN;
-    static QByteArray LOGOUT;
+    static QByteArray SIGN_IN;
+    static QByteArray SIGN_OUT;
     static QByteArray VERIFICATION_EMAIL_REQUEST;
     static QByteArray REQUEST_PASSWORD_RESET;
     static QByteArray USERS;

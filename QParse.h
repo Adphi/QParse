@@ -31,6 +31,9 @@
 #include <QNetworkRequest>
 #include <QDebug>
 
+/**
+ * @brief The QParse class
+ */
 class QParse : public QObject
 {
     Q_OBJECT

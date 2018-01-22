@@ -26,6 +26,9 @@
 #include <QParseObject.h>
 #include <QDebug>
 
+/**
+ * @brief The QParseUser class
+ */
 class QParseUser : public QParseObject
 {
     Q_OBJECT

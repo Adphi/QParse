@@ -29,6 +29,13 @@ QByteArray QParse::SESSION_TOKEN = "X-Parse-Session-Token";
 
 QParse *QParse::sInstance = nullptr;
 
+/**
+ * @brief QParse::initialize
+ * @param url
+ * @param appId
+ * @param apiKey
+ * @param parent
+ */
 void QParse::initialize(const QByteArray &url, const QByteArray &appId, const QByteArray &apiKey, QObject *parent)
 {
     if(sInstance) return;
@@ -36,6 +43,10 @@ void QParse::initialize(const QByteArray &url, const QByteArray &appId, const QB
     sInstance = new QParse(url, appId, apiKey, parent);
 }
 
+/**
+ * @brief QParse::getInstance
+ * @return
+ */
 QParse* QParse::getInstance()
 {
     if(!sInstance) {
@@ -56,11 +67,20 @@ QParse::QParse(const QByteArray &url, const QByteArray &appId, const QByteArray 
     mSettings = new QSettings(this);
 }
 
+/**
+ * @brief QParse::settings
+ * @return
+ */
 QSettings* QParse::settings() const
 {
     return mSettings;
 }
 
+/**
+ * @brief QParse::request
+ * @param path
+ * @return
+ */
 QNetworkRequest QParse::request(const QByteArray &path) const
 {
     QUrl url(mUrl + path);

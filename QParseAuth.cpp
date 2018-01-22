@@ -30,8 +30,8 @@
 #include <QtPropertySerializer.h>
 
 QByteArray QParseAuth::SIGN_UP = "/users";
-QByteArray QParseAuth::LOGIN = "/login";
-QByteArray QParseAuth::LOGOUT = "/logout";
+QByteArray QParseAuth::SIGN_IN = "/login";
+QByteArray QParseAuth::SIGN_OUT = "/logout";
 QByteArray QParseAuth::VERIFICATION_EMAIL_REQUEST = "/verificationEmailRequest";
 QByteArray QParseAuth::REQUEST_PASSWORD_RESET = "/requestPasswordReset";
 QByteArray QParseAuth::VALIDATE_SESSION = "/users/me";
@@ -44,11 +44,19 @@ QParseAuth::QParseAuth(QObject *parent) : QObject(parent)
 {
     mParse = QParse::getInstance();
     mToken = mParse->settings()->value(QParse::SESSION_TOKEN, "").toString();
-    mSignedIn = ! mUser && ! mToken.isEmpty();
+    mIsSignedIn = ! mUser && ! mToken.isEmpty();
     mManager = new QNetworkAccessManager(this);
     if(! mToken.isEmpty()) retrieveSession();
 }
 
+QString QParseAuth::token() const
+{
+    return mToken;
+}
+
+/**
+ * @brief QParseAuth::retrieveSession
+ */
 void QParseAuth::retrieveSession()
 {
     mIsAuthenticating = true;
@@ -57,6 +65,7 @@ void QParseAuth::retrieveSession()
     mReply = mManager->get(request);
     connect(mReply, &QNetworkReply::finished, [&](){
         if(mReply->error()) {
+            // TODO: Handle Errors
             qDebug() << mReply->readAll();
             mIsAuthenticating = false;
             return;
@@ -66,7 +75,7 @@ void QParseAuth::retrieveSession()
         const QJsonObject json = doc.object();
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
         qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
-        mSignedIn = true;
+        mIsSignedIn = true;
         mIsAuthenticating = false;
         emit userChanged(mUser);
         emit signedInChanged(true);
@@ -74,6 +83,10 @@ void QParseAuth::retrieveSession()
     });
 }
 
+/**
+ * @brief QParseAuth::user
+ * @return
+ */
 QParseUser *QParseAuth::user() const
 {
     return mUser;
@@ -102,7 +115,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
     if( !mToken.isEmpty() ) {
         qDebug() << "Already Signed In with token:" << mToken;
         emit signedInChanged(true);
-        mSignedIn = true;
+        mIsSignedIn = true;
         return;
     }
     else if( !mToken.isEmpty() && !mUser) {
@@ -111,7 +124,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
     //else if(mIsAuthenticating) return;
 
     mIsAuthenticating = true;
-    QUrl url(mParse->url() + LOGIN);
+    QUrl url(mParse->url() + SIGN_IN);
     QUrlQuery query;
     query.addQueryItem("username", name);
     query.addQueryItem("password", password);
@@ -123,6 +136,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
     mReply = mManager->get(request);
     connect(mReply, &QNetworkReply::finished, [&](){
         if(mReply->error()) {
+            // TODO: Handle Errors
             qDebug() << mReply->readAll();
             mIsAuthenticating = false;
             return;
@@ -131,7 +145,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
         const QJsonObject json = doc.object();
         mToken = json["sessionToken"].toString();
         mParse->settings()->setValue(QParse::SESSION_TOKEN, mToken);
-        mSignedIn = true;
+        mIsSignedIn = true;
         qDebug() << "Session Token" << mParse->settings()->value(QParse::SESSION_TOKEN, "").toString();
         mUser = new QParseUser(this);
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
@@ -155,14 +169,12 @@ void QParseAuth::signOut() {
     else if(mIsAuthenticating) return;
     mIsAuthenticating = true;
     qDebug() << "Signing Out";
-    QUrl url(mParse->url() + LOGOUT);
-    QNetworkRequest request(url);
-    request.setRawHeader(QParse::APP_ID, mParse->appId());
-    request.setRawHeader(QParse::REST_API_KEY, mParse->apiKey());
+    auto request = mParse->request(SIGN_OUT);
     request.setRawHeader(QParse::SESSION_TOKEN, mToken.toUtf8());
     mReply = mManager->post(request, "");
     connect(mReply, &QNetworkReply::finished, [&](){
         if(mReply->error()) {
+            // TODO: Handle Errors
             qDebug() << "Could not signOut";
             mIsAuthenticating = false;
         }
@@ -170,9 +182,10 @@ void QParseAuth::signOut() {
         mParse->settings()->setValue (QParse::SESSION_TOKEN, "");
         mToken = "";
         mUser = nullptr;
-        mSignedIn = false;
+        mIsSignedIn = false;
         mReply->deleteLater();
         mIsAuthenticating = false;
+        emit userChanged(mUser);
         emit signedInChanged(false);
     });
 }
@@ -186,7 +199,7 @@ void QParseAuth::signOut() {
  */
 void QParseAuth::signUp(const QString &name, const QString &email, const QString &password, const QString &phone)
 {
-    if(mSignedIn) {
+    if(mIsSignedIn) {
         qDebug() << "Can't sign up, sign out first";
         return;
     }
@@ -216,7 +229,7 @@ void QParseAuth::signUp(const QString &name, const QString &email, const QString
         mParse->settings()->setValue(QParse::SESSION_TOKEN, mToken);
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
         qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
-        mSignedIn = true;
+        mIsSignedIn = true;
         mIsAuthenticating = false;
         emit signedInChanged(true);
         emit userChanged(mUser);
@@ -225,11 +238,57 @@ void QParseAuth::signUp(const QString &name, const QString &email, const QString
 
 }
 
+void QParseAuth::requestVerificationEmail()
+{
+    if(!mIsSignedIn) {
+        qDebug() << "Can't send Verification Email: sign in first";
+        return;
+    }
+    else if(mIsAuthenticating) return;
+    else if(mUser->email() == nullptr || mUser->email().isEmpty()) {
+        qDebug() << "Can't send Verification Email: no valid email.";
+        return;
+    }
+
+    auto request = mParse->request(VERIFICATION_EMAIL_REQUEST);
+    request.setRawHeader("Content-Type", "application/json");
+    QJsonObject data;
+    data["email"] = mUser->email();
+    mReply = mManager->post(request, QJsonDocument(data).toJson());
+    connect(mReply, &QNetworkReply::finished, [&](){
+        if(mReply->error()) {
+            qDebug() << mReply->errorString();
+            qDebug() << mReply->readAll();
+            return;
+        }
+        qDebug() << mReply->readAll();
+        mReply->deleteLater();
+    });
+
+}
+
+void QParseAuth::requestPasswordReset(const QString& email)
+{
+    if(email.isEmpty()) return;
+    auto request = mParse->request(REQUEST_PASSWORD_RESET);
+    QJsonObject json;
+    json["email"] = email;
+    mReply = mManager->post(request, QJsonDocument(json).toJson());
+    connect(mReply, &QNetworkReply::finished, [&](){
+        if(mReply->error()) {
+            qDebug() << mReply->errorString();
+            qDebug() << mReply->readAll();
+            return;
+        }
+        qDebug() << mReply->readAll();
+    });
+}
+
 /**
  * @brief QParseAuth::signedIn
  * @return
  */
-bool QParseAuth::signedIn() const
+bool QParseAuth::isSignedIn() const
 {
-    return mSignedIn;
+    return mIsSignedIn;
 }

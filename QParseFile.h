@@ -24,16 +24,39 @@
 #define QPARSEFILE_H
 
 #include <QObject>
+#include <QNetworkAccessManager>
 
+/**
+ * @brief The QParseFile class
+ */
 class QParseFile : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QByteArray url READ url WRITE setUrl NOTIFY urlChanged)
+
 public:
     explicit QParseFile(QObject *parent = nullptr);
     QParseFile(const QString& name, const QByteArray& url, QObject *parent = nullptr);
+    Q_INVOKABLE void upload(const QString& filePath);
+
+    QString name() const;
+    void setName(const QString &name);
+
+    QByteArray url() const;
+    void setUrl(const QByteArray &url);
+
+signals:
+    void nameChanged();
+    void urlChanged();
+    void uploadFinished();
 private:
     QString mName;
     QByteArray mUrl;
+
+    QNetworkAccessManager *mManager;
+    // Path
+    static QByteArray FILE;
 };
 
 #endif // QPARSEFILE_H
