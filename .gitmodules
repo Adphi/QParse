@@ -1,0 +1,3 @@
+[submodule "external/qtpromise"]
+	path = external/qtpromise
+	url = https://github.com/simonbrunel/qtpromise.git

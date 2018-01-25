@@ -62,16 +62,17 @@ void QParseAuth::retrieveSession()
     mIsAuthenticating = true;
     auto request = mParse->request(VALIDATE_SESSION);
     request.setRawHeader(QParse::SESSION_TOKEN, mToken.toUtf8());
-    mReply = mManager->get(request);
-    connect(mReply, &QNetworkReply::finished, [&](){
-        if(mReply->error()) {
+    auto reply = mManager->get(request);
+    connect(reply, &QNetworkReply::finished, [&, reply](){
+        if(reply->error()) {
             // TODO: Handle Errors
-            qDebug() << mReply->readAll();
+            qDebug() << reply->readAll();
+            qDebug() << reply->errorString();
             mIsAuthenticating = false;
             return;
         }
         mUser = new QParseUser(this);
-        QJsonDocument doc = QJsonDocument::fromJson(QString(mReply->readAll()).toUtf8());
+        QJsonDocument doc = QJsonDocument::fromJson(QString(reply->readAll()).toUtf8());
         const QJsonObject json = doc.object();
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
         qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
@@ -133,15 +134,15 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
     request.setRawHeader(QParse::APP_ID, mParse->appId());
     request.setRawHeader(QParse::REST_API_KEY, mParse->apiKey());
     request.setRawHeader(QParse::REVOCABLE_SESSION, mParse->revocableSession() ? "1" : "0");
-    mReply = mManager->get(request);
-    connect(mReply, &QNetworkReply::finished, [&](){
-        if(mReply->error()) {
+    auto reply = mManager->get(request);
+    connect(reply, &QNetworkReply::finished, [&, reply](){
+        if(reply->error()) {
             // TODO: Handle Errors
-            qDebug() << mReply->readAll();
+            qDebug() << reply->readAll();
             mIsAuthenticating = false;
             return;
         }
-        QJsonDocument doc = QJsonDocument::fromJson(QString(mReply->readAll()).toUtf8());
+        QJsonDocument doc = QJsonDocument::fromJson(QString(reply->readAll()).toUtf8());
         const QJsonObject json = doc.object();
         mToken = json["sessionToken"].toString();
         mParse->settings()->setValue(QParse::SESSION_TOKEN, mToken);
@@ -150,7 +151,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
         mUser = new QParseUser(this);
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
         qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
-        mReply->deleteLater();
+        reply->deleteLater();
         mIsAuthenticating = false;
         emit userChanged(mUser);
         emit signedInChanged(true);
@@ -171,19 +172,19 @@ void QParseAuth::signOut() {
     qDebug() << "Signing Out";
     auto request = mParse->request(SIGN_OUT);
     request.setRawHeader(QParse::SESSION_TOKEN, mToken.toUtf8());
-    mReply = mManager->post(request, "");
-    connect(mReply, &QNetworkReply::finished, [&](){
-        if(mReply->error()) {
+    auto reply = mManager->post(request, "");
+    connect(reply, &QNetworkReply::finished, [&, reply](){
+        if(reply->error()) {
             // TODO: Handle Errors
             qDebug() << "Could not signOut";
             mIsAuthenticating = false;
         }
-        qDebug() << mReply->readAll();
+        qDebug() << reply->readAll();
         mParse->settings()->setValue (QParse::SESSION_TOKEN, "");
         mToken = "";
         mUser = nullptr;
         mIsSignedIn = false;
-        mReply->deleteLater();
+        reply->deleteLater();
         mIsAuthenticating = false;
         emit userChanged(mUser);
         emit signedInChanged(false);
@@ -215,14 +216,14 @@ void QParseAuth::signUp(const QString &name, const QString &email, const QString
     data["email"] = email;
     data["password"] = password;
     data["phone"] = phone;
-    mReply = mManager->post(request, QJsonDocument(data).toJson());
-    connect(mReply, &QNetworkReply::finished, [&](){
-        if(mReply->error()) {
-            qDebug() << mReply->readAll();
+    auto reply = mManager->post(request, QJsonDocument(data).toJson());
+    connect(reply, &QNetworkReply::finished, [&, reply](){
+        if(reply->error()) {
+            qDebug() << reply->readAll();
             mIsAuthenticating = false;
             return;
         }
-        QJsonDocument doc = QJsonDocument::fromJson(QString(mReply->readAll()).toUtf8());
+        QJsonDocument doc = QJsonDocument::fromJson(QString(reply->readAll()).toUtf8());
         qDebug() << doc;
         const QJsonObject json = doc.object();
         mToken = json["sessionToken"].toString();
@@ -233,7 +234,7 @@ void QParseAuth::signUp(const QString &name, const QString &email, const QString
         mIsAuthenticating = false;
         emit signedInChanged(true);
         emit userChanged(mUser);
-        mReply->deleteLater();
+        reply->deleteLater();
     });
 
 }
@@ -254,15 +255,15 @@ void QParseAuth::requestVerificationEmail()
     request.setRawHeader("Content-Type", "application/json");
     QJsonObject data;
     data["email"] = mUser->email();
-    mReply = mManager->post(request, QJsonDocument(data).toJson());
-    connect(mReply, &QNetworkReply::finished, [&](){
-        if(mReply->error()) {
-            qDebug() << mReply->errorString();
-            qDebug() << mReply->readAll();
+    auto reply = mManager->post(request, QJsonDocument(data).toJson());
+    connect(reply, &QNetworkReply::finished, [&, reply](){
+        if(reply->error()) {
+            qDebug() << reply->errorString();
+            qDebug() << reply->readAll();
             return;
         }
-        qDebug() << mReply->readAll();
-        mReply->deleteLater();
+        qDebug() << reply->readAll();
+        reply->deleteLater();
     });
 
 }
@@ -273,14 +274,14 @@ void QParseAuth::requestPasswordReset(const QString& email)
     auto request = mParse->request(REQUEST_PASSWORD_RESET);
     QJsonObject json;
     json["email"] = email;
-    mReply = mManager->post(request, QJsonDocument(json).toJson());
-    connect(mReply, &QNetworkReply::finished, [&](){
-        if(mReply->error()) {
-            qDebug() << mReply->errorString();
-            qDebug() << mReply->readAll();
+    auto reply = mManager->post(request, QJsonDocument(json).toJson());
+    connect(reply, &QNetworkReply::finished, [&, reply](){
+        if(reply->error()) {
+            qDebug() << reply->errorString();
+            qDebug() << reply->readAll();
             return;
         }
-        qDebug() << mReply->readAll();
+        qDebug() << reply->readAll();
     });
 }
 

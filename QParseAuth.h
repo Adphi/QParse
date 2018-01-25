@@ -84,8 +84,6 @@ private:
     static QByteArray REQUEST_PASSWORD_RESET;
     static QByteArray USERS;
     static QByteArray VALIDATE_SESSION;
-
-    QNetworkReply *mReply = nullptr;
 };
 
 #endif // QPARSEUSER_H

@@ -28,7 +28,10 @@ SOURCES += \
     $$PWD/QParseAuth.cpp \
     $$PWD/QParseObject.cpp \
     $$PWD/QtPropertySerializer.cpp \
-    $$PWD/QParseUser.cpp
+    $$PWD/QParseUser.cpp \
+    $$PWD/QParseFileManager.cpp \
+    $$PWD/QParseObjectManager.cpp \
+    $$PWD/QParseRequest.cpp
 
 HEADERS += \
 	$$PWD/QParse.h \
@@ -38,7 +41,10 @@ HEADERS += \
     $$PWD/QParseObject.h \
     $$PWD/Utils.h \
     $$PWD/QtPropertySerializer.h \
-    $$PWD/QParseUser.h
+    $$PWD/QParseUser.h \
+    $$PWD/QParseFileManager.h \
+    $$PWD/QParseObjectManager.h \
+    $$PWD/QParseRequest.h
 
 unix {
     target.path = /usr/lib

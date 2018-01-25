@@ -1,8 +1,8 @@
 /*****************************************************************************
  *
- * QParseFile.h
+ * QParseFileManager.h
  *
- * Created: 19 2018 by Philippe-Adrien
+ * Created: 23 2018 by Philippe-Adrien
  *
  * Copyright 2018 Philippe-Adrien. All rights reserved.
  *
@@ -20,42 +20,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#ifndef QPARSEFILE_H
-#define QPARSEFILE_H
+#ifndef QPARSEFILEMANAGER_H
+#define QPARSEFILEMANAGER_H
 
 #include <QObject>
-#include <QUrl>
+#include <QNetworkAccessManager>
+#include "QParseFile.h"
 
-/**
- * @brief The QParseFile class
- */
-class QParseFile : public QObject
+class QParseFileManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-
 public:
-    explicit QParseFile(QObject *parent = nullptr);
-    QParseFile(const QString& name, const QUrl& url, QObject *parent = nullptr);
-    Q_INVOKABLE void upload(const QString& filePath);
-    Q_INVOKABLE void upload(const QString& name, const QByteArray data);
-    Q_INVOKABLE void remove();
-
-    QString name() const;
-    void setName(const QString &name);
-
-    QUrl url() const;
-    void setUrl(const QUrl &url);
-
+    Q_INVOKABLE static QParseFileManager* getInstance();
+    Q_INVOKABLE void upload(const QString& filePath) const;
+    Q_INVOKABLE void upload(const QString& name, const QByteArray& data) const;
+    Q_INVOKABLE void remove(const QParseFile& file) const;
 signals:
-    void nameChanged();
-    void urlChanged();
-    void uploadFinished();
-    void removed();
+    void uploadFinished(QParseFile *file) const;
+    void removeFinished();
+
+public slots:
+
 private:
-    QString mName;
-    QUrl mUrl;
+    explicit QParseFileManager(QObject *parent = nullptr);
+    static QParseFileManager *sInstance;
+    QNetworkAccessManager *mManager;
+    // Path
+    static QByteArray FILE;
 };
 
-#endif // QPARSEFILE_H
+#endif // QPARSEFILEMANAGER_H

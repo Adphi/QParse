@@ -22,81 +22,37 @@
  *****************************************************************************/
 #include "QParseFile.h"
 
-#include "QParseAuth.h"
-#include <QMimeDatabase>
+#include "QParseFileManager.h"
 #include <QFile>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QJsonDocument>
-#include <QJsonObject>
-
-QByteArray QParseFile::FILE = "/files";
 
 QParseFile::QParseFile(QObject *parent) : QObject(parent)
 {
 }
 
-QParseFile::QParseFile(const QString &name, const QByteArray &url, QObject *parent) :
-    QObject(parent), mName(name), mUrl(url)
+QParseFile::QParseFile(const QString &name, const QUrl &url, QObject *parent) :
+        QObject(parent), mName(name), mUrl(url)
 {
 
 }
 
 void QParseFile::upload(const QString& filePath)
 {
-    mManager = new QNetworkAccessManager(this);
-    QMimeDatabase db;
-    QFile file(filePath);
-    QString fileName = QUrl(filePath).fileName();
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Could not open the file:" << file.fileName();
-        return;
-    }
-    QString token = QParseAuth::getInstance()->token();
-    auto request = QParse::getInstance()->request(FILE + "/" + fileName.toUtf8());
-    request.setRawHeader(QParse::SESSION_TOKEN, token.toUtf8());
-    request.setHeader(QNetworkRequest::ContentTypeHeader, db.mimeTypeForUrl(QUrl(filePath)).name());
-    qDebug() << "Sending File" << fileName << "(type:" << db.mimeTypeForUrl(QUrl(filePath)).name() <<")" << file.size() << "bytes";
-    mManager->post(request, file.readAll());
-    connect(mManager, &QNetworkAccessManager::finished, [&](QNetworkReply* reply) {
-        if(reply->error()) {
-            qDebug() << reply->errorString();
-            qDebug() << reply->readAll();
-            return;
-        }
-        QJsonDocument doc = QJsonDocument::fromJson(QString(reply->readAll()).toUtf8());
-        QJsonObject json = doc.object();
-        mName = json["name"].toString();
-        mUrl = json["url"].toString().toUtf8();
-        qDebug() << "Upload Success File:" << mName << "Url:" << mUrl;
-        reply->deleteLater();
+    auto *fileManager = QParseFileManager::getInstance();
+    fileManager->upload(filePath);
+    // TODO: connect to uploadFinished
+    connect(fileManager, &QParseFileManager::uploadFinished, [&](QParseFile *file){
+        mName = file->name();
+        mUrl = file->url();
         emit uploadFinished();
     });
-    file.close();
 }
 
 void QParseFile::remove()
 {
-    auto *parse = QParse::getInstance();
-    if(parse->masterKey().isNull()) {
-        qDebug() << "Only available with Parse master key";
-        return;
-    }
-    if(mName.isNull() || mName.isEmpty()) {
-        qDebug() << "Missing File Name";
-        return;
-    }
-    if(!mManager) mManager = new QNetworkAccessManager(this);
-    auto request = parse->request(FILE + "/" + mName.toUtf8());
-    request.setRawHeader(QParse::MASTER_KEY, parse->masterKey());
-    mManager->deleteResource(request);
-    connect(mManager, &QNetworkAccessManager::finished, [&](QNetworkReply *reply){
-        if(reply->error()) {
-            qDebug() << reply->errorString();
-            qDebug() << reply->readAll();
-            return;
-        }
-        qDebug() << reply->readAll();
+    auto fileManager = QParseFileManager::getInstance();
+    fileManager->remove(*this);
+    connect(fileManager, &QParseFileManager::removeFinished, [&](){
+        emit removed();
     });
 }
 
@@ -112,12 +68,23 @@ void QParseFile::setName(const QString &name)
     mName = name;
 }
 
-QByteArray QParseFile::url() const
+QUrl QParseFile::url() const
 {
     return mUrl;
 }
 
-void QParseFile::setUrl(const QByteArray &url)
+void QParseFile::setUrl(const QUrl &url)
 {
     mUrl = url;
+}
+
+void QParseFile::upload(const QString &name, const QByteArray data) {
+    auto *fileManager = QParseFileManager::getInstance();
+    fileManager->upload(name, data);
+    // TODO: connect to uploadFinished
+    connect(fileManager, &QParseFileManager::uploadFinished, [&](QParseFile *file){
+        mName = file->name();
+        mUrl = file->url();
+        emit uploadFinished();
+    });
 }

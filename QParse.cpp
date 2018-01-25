@@ -121,3 +121,18 @@ QByteArray QParse::url() const
     return mUrl;
 }
 
+QParse *QParse::url(const QByteArray &url) {
+    mUrl = url;
+    return this;
+}
+
+QParse *QParse::appId(const QByteArray &appId) {
+    mAppId = appId;
+    return this;
+}
+
+QParse *QParse::apiKey(const QByteArray &apiKey) {
+    mApiKey = apiKey;
+    return this;
+}
+

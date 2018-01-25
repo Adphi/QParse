@@ -39,6 +39,10 @@ class QParseObject : public QObject
 public:
     explicit QParseObject(QObject *parent = nullptr);
 
+    Q_INVOKABLE void save();
+    Q_INVOKABLE void update();
+    Q_INVOKABLE void remove();
+
     QString objectId() const;
     void setObjectId(const QString &objectId);
 
@@ -49,6 +53,11 @@ public:
     void setCreatedAt(const QDateTime &createdAt);
 
 signals:
+
+    void saved();
+    void updated();
+    void removed();
+
     void objectIdChanged();
     void createdAtChanged();
     void updatedAtChanged();

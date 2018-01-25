@@ -21,10 +21,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
 #include "QParseObject.h"
+#include "QParseObjectManager.h"
+#include <QDebug>
 
 QParseObject::QParseObject(QObject *parent) : QObject(parent)
 {
+    qDebug() << "Creating QParseObject";
+}
 
+void QParseObject::save()
+{
+    auto manager = QParseObjectManager::getInstance();
+    manager->save(this);
+    connect(manager, &QParseObjectManager::saved, [&](){
+        this->disconnect();
+        emit saved();
+    });
+}
+
+void QParseObject::update()
+{
+    auto manager = QParseObjectManager::getInstance();
+    manager->update(this);
+    connect(manager, &QParseObjectManager::updated, [&](){
+        emit updated();
+    });
+
+}
+
+void QParseObject::remove()
+{
+    auto manager = QParseObjectManager::getInstance();
+    manager->remove(this);
+    connect(manager, &QParseObjectManager::removed, [&](){
+        emit removed();
+    });
 }
 
 QString QParseObject::objectId() const
