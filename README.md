@@ -29,10 +29,10 @@ TODO:
   - Calling from Client Apps
 - Objects
   - ~~Object Format~~
-  - Creating Objects
-  - Retrieving Objects
-  - Updating Objects
-  - Deleting Objects
+  - *Creating Objects*
+  - ~~Retrieving Objects~~
+  - ~~Updating Objects~~
+  - ~~Deleting Objects~~
   - Batch Operations
   - Data Types
 - Queries
@@ -48,10 +48,10 @@ TODO:
 - Users
   - ~~Signing Up~~
   - ~~Logging In~~
-  - Verifying Emails
-  - Requesting A Password Reset
+  - ~~Verifying Emails~~
+  - ~~Requesting A Password Reset~~
   - Retrieving Users
-  - Validating Session Tokens / Retrieving Current User
+  - ~~Validating Session Tokens / Retrieving Current User~~
   - Updating Users
   - Querying
   - Deleting Users
@@ -75,9 +75,9 @@ TODO:
   - Security with Role
   - Role Hierarchy
 - Files
-  - Uploading Files
+  - ~~Uploading Files~~
   - Associating with Objects
-  - Deleting Files
+  - ~~Deleting Files~~
 - GeoPoints
   - GeoPoint
   - Geo Queries
