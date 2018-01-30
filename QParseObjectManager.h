@@ -25,7 +25,7 @@
 
 #include <QObject>
 #include <QNetworkAccessManager>
-#include <QParseObject.h>
+#include <QAbstractParseObject.h>
 
 class QParseObjectManager : public QObject
 {
@@ -34,13 +34,13 @@ public:
     explicit QParseObjectManager(QObject *parent = nullptr);
     Q_INVOKABLE static QParseObjectManager* getInstance();
 
-    Q_INVOKABLE void save(QParseObject *object);
-    Q_INVOKABLE void update(QParseObject *object);
-    Q_INVOKABLE void remove(QParseObject *object);
+    Q_INVOKABLE void save(QAbstractParseObject *object);
+    Q_INVOKABLE void update(QAbstractParseObject *object);
+    Q_INVOKABLE void remove(QAbstractParseObject *object);
 
 signals:
-    void saved(QParseObject* parseObject);
-    void updated(QParseObject* parseObject);
+    void saved(QAbstractParseObject* parseObject);
+    void updated(QAbstractParseObject* parseObject);
     void removed();
 
 public slots:

@@ -34,7 +34,7 @@ public:
     Q_INVOKABLE static QParseFileManager* getInstance();
     Q_INVOKABLE void upload(const QString& filePath) const;
     Q_INVOKABLE void upload(const QString& name, const QByteArray& data) const;
-    Q_INVOKABLE void remove(const QParseFile& file) const;
+    Q_INVOKABLE void remove(const QParseFile& file);
 signals:
     void uploadFinished(QParseFile *file) const;
     void removeFinished();

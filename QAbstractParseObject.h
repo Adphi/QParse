@@ -20,16 +20,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#ifndef QPARSEOBJECT_H
-#define QPARSEOBJECT_H
+#ifndef QABSTRACTPARSEOBJECT_H
+#define QABSTRACTPARSEOBJECT_H
 
 #include <QObject>
 #include <QDateTime>
+#include <QJsonObject>
 
 /**
- * @brief The QParseObject class
+ * @brief The QAbstractParseObject class
  */
-class QParseObject : public QObject
+class QAbstractParseObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString objectId READ objectId WRITE setObjectId NOTIFY objectIdChanged)
@@ -37,11 +38,14 @@ class QParseObject : public QObject
     Q_PROPERTY(QDateTime updatedAt READ updatedAt WRITE setUpdatedAt NOTIFY updatedAtChanged)
 
 public:
-    explicit QParseObject(QObject *parent = nullptr);
+    explicit QAbstractParseObject(QObject *parent = nullptr);
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void update();
     Q_INVOKABLE void remove();
+
+    Q_INVOKABLE virtual QJsonObject serialize() const final;
+    Q_INVOKABLE virtual void deserialize(const QJsonObject& json) final;
 
     QString objectId() const;
     void setObjectId(const QString &objectId);
@@ -68,6 +72,12 @@ protected:
     QString mObjectId;
     QDateTime mUpdatedAt;
     QDateTime mCreatedAt;
+
+private:
+    Q_INVOKABLE virtual QJsonObject serialize_impl() const = 0;
+    Q_INVOKABLE virtual void deserialize_impl(const QJsonObject& json) = 0;
 };
 
-#endif // QPARSEOBJECT_H
+QDebug operator<<(QDebug debug, const QAbstractParseObject &o);
+
+#endif // QABSTRACTPARSEOBJECT_H

@@ -1,3 +1,6 @@
 [submodule "external/qtpromise"]
 	path = external/qtpromise
 	url = https://github.com/simonbrunel/qtpromise.git
+[submodule "external/json"]
+	path = external/json
+	url = https://github.com/nlohmann/json.git

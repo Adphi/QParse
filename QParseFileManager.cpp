@@ -48,7 +48,7 @@ void QParseFileManager::upload(const QString& filePath) const
     file.close();
 }
 
-void QParseFileManager::remove(const QParseFile& file) const
+void QParseFileManager::remove(const QParseFile& file)
 {
     auto *parse = QParse::getInstance();
     if(parse->masterKey().isNull()) {
@@ -69,6 +69,7 @@ void QParseFileManager::remove(const QParseFile& file) const
             return;
         }
         qDebug() << reply->readAll();
+        emit removeFinished();
     });
 }
 

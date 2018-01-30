@@ -150,7 +150,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
         qDebug() << "Session Token" << mParse->settings()->value(QParse::SESSION_TOKEN, "").toString();
         mUser = new QParseUser(this);
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
-        qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
+        qDebug() << mUser;
         reply->deleteLater();
         mIsAuthenticating = false;
         emit userChanged(mUser);

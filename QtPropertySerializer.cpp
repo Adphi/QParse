@@ -11,6 +11,7 @@
 #include <QMetaProperty>
 #include <QTextStream>
 #include <QVariantList>
+#include <QDebug>
 
 namespace QtPropertySerializer
 {
@@ -28,12 +29,14 @@ namespace QtPropertySerializer
                 const QByteArray propertyName = QByteArray(metaProperty.name());
                 if(includeObjectName || (propertyName != "objectName")) {
                     const QVariant propertyValue = object->property(propertyName.constData());
+                    qDebug() << propertyName << propertyValue;
                     addMappedData(data, propertyName, propertyValue);
                 }
             }
         }
         foreach(const QByteArray &propertyName, object->dynamicPropertyNames()) {
             const QVariant propertyValue = object->property(propertyName.constData());
+            qDebug() << propertyName << propertyValue;
             addMappedData(data, propertyName, propertyValue);
         }
         // Children.
@@ -47,7 +50,7 @@ namespace QtPropertySerializer
         }
         return data;
     }
-    
+
     void addMappedData(QVariantMap &data, const QByteArray &key, const QVariant &value)
     {
         if(data.contains(key)) {
@@ -67,7 +70,7 @@ namespace QtPropertySerializer
             data[key] = value;
         }
     }
-    
+
     void deserialize(QObject *object, const QVariantMap &data, ObjectFactory *factory)
     {
         if(!object)
@@ -178,7 +181,7 @@ namespace QtPropertySerializer
             }
         }
     }
-    
+
     bool readJson(QObject *object, const QString &filePath, ObjectFactory *factory)
     {
         QFile file(filePath);
@@ -190,7 +193,7 @@ namespace QtPropertySerializer
         deserialize(object, data, factory);
         return true;
     }
-    
+
     bool writeJson(QObject *object, const QString &filePath, int childDepth, bool includeReadOnlyProperties, bool includeObjectName)
     {
         QFile file(filePath);
@@ -202,5 +205,5 @@ namespace QtPropertySerializer
         file.close();
         return true;
     }
-    
+
 } // QtPropertySerializer

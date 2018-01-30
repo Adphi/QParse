@@ -22,15 +22,34 @@
  *****************************************************************************/
 #include "QParseUser.h"
 
-QParseUser::QParseUser(QObject *parent) : QParseObject(parent)
+QParseUser::QParseUser(QObject *parent) : QAbstractParseObject(parent)
 {
 
 }
 
 QParseUser::QParseUser(const QString &username, const QString &email, const QString &phone, QObject *parent)
-    : QParseObject(parent), mUsername(username), mEmail(email), mPhone(phone)
+    : QAbstractParseObject(parent), mUsername(username), mEmail(email), mPhone(phone)
 {
 
+}
+
+QJsonObject QParseUser::serialize_impl() const
+{
+    QJsonObject json;
+    json["username"] = mUsername;
+    json["email"] = mEmail;
+    json["phone"] = mPhone;
+    return json;
+}
+
+void QParseUser::deserialize_impl(const QJsonObject &json)
+{
+    if(json.contains("username"))
+        mUsername = json["username"].toString();
+    if(json.contains("email"))
+        mEmail = json["email"].toString();
+    if(json.contains("phone"))
+        mPhone = json["phone"].toString();
 }
 
 QString QParseUser::username() const
@@ -61,4 +80,12 @@ QString QParseUser::phone() const
 void QParseUser::setPhone(const QString &phone)
 {
     mPhone = phone;
+}
+
+QDebug operator<<(QDebug debug, const QParseUser &u)
+{
+    QDebugStateSaver saver(debug);
+    debug << '(' << u.username() << ", " << u.email() << u.objectId() << ')';
+
+    return debug;
 }
