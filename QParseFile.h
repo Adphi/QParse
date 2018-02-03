@@ -56,6 +56,9 @@ signals:
 private:
     QString mName;
     QUrl mUrl;
+
+private slots:
+    void updateFileInfos(QParseFile* file);
 };
 
 #endif // QPARSEFILE_H

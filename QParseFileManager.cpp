@@ -38,8 +38,9 @@ QParseFileManager::QParseFileManager(QObject *parent) : QObject(parent)
 }
 void QParseFileManager::upload(const QString& filePath) const
 {
-    QFile file(filePath);
-    QString fileName = QUrl(filePath).fileName();
+    auto url = QUrl(filePath);
+    QFile file(url.toLocalFile());
+    QString fileName = url.fileName();
     if(!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Could not open the file:" << file.fileName();
         return;

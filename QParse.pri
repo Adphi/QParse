@@ -20,7 +20,7 @@ SOURCES += \
     $$PWD/QParseUser.cpp \
     $$PWD/QParseFileManager.cpp \
     $$PWD/QParseObjectManager.cpp \
-    $$PWD/QParseRequest.cpp
+    $$PWD/QParseQuery.cpp
 
 HEADERS += \
 	$$PWD/QParse.h \
@@ -33,4 +33,4 @@ HEADERS += \
     $$PWD/QParseUser.h \
     $$PWD/QParseFileManager.h \
     $$PWD/QParseObjectManager.h \
-    $$PWD/QParseRequest.h
+    $$PWD/QParseQuery.h

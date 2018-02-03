@@ -20,20 +20,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#ifndef QPARSEREQUEST_H
-#define QPARSEREQUEST_H
+#ifndef QPARSEQUERY_H
+#define QPARSEQUERY_H
 
 #include <QObject>
+#include <QAbstractParseObject.h>
 
-class QParseRequest : public QObject
+//template <typename T, typename std::enable_if<std::is_base_of<QAbstractParseObject, T>::value>::type* = nullptr>
+class QParseQuery : public QObject
 {
     Q_OBJECT
 public:
-    explicit QParseRequest(QObject *parent = nullptr);
+    explicit QParseQuery(QObject *parent = nullptr);
 
 signals:
 
 public slots:
 };
 
-#endif // QPARSEREQUEST_H
+#endif // QPARSEQUERY_H

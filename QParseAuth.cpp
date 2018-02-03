@@ -75,7 +75,7 @@ void QParseAuth::retrieveSession()
         QJsonDocument doc = QJsonDocument::fromJson(QString(reply->readAll()).toUtf8());
         const QJsonObject json = doc.object();
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
-        qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
+        qDebug() << *mUser;
         mIsSignedIn = true;
         mIsAuthenticating = false;
         emit userChanged(mUser);
@@ -113,16 +113,17 @@ QParseAuth *QParseAuth::getInstance(QObject *parent)
  * @param password
  */
 void QParseAuth::signIn(const QString &name, const QString &password) {
-    if( !mToken.isEmpty() ) {
+    if(mIsAuthenticating) return;
+
+    if( !mToken.isEmpty() && !mUser) {
+        retrieveSession();
+    }
+    else if( !mToken.isEmpty() ) {
         qDebug() << "Already Signed In with token:" << mToken;
         emit signedInChanged(true);
         mIsSignedIn = true;
         return;
     }
-    else if( !mToken.isEmpty() && !mUser) {
-        retrieveSession();
-    }
-    //else if(mIsAuthenticating) return;
 
     mIsAuthenticating = true;
     QUrl url(mParse->url() + SIGN_IN);
@@ -150,7 +151,7 @@ void QParseAuth::signIn(const QString &name, const QString &password) {
         qDebug() << "Session Token" << mParse->settings()->value(QParse::SESSION_TOKEN, "").toString();
         mUser = new QParseUser(this);
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
-        qDebug() << mUser;
+        qDebug() << *mUser;
         reply->deleteLater();
         mIsAuthenticating = false;
         emit userChanged(mUser);
@@ -229,7 +230,7 @@ void QParseAuth::signUp(const QString &name, const QString &email, const QString
         mToken = json["sessionToken"].toString();
         mParse->settings()->setValue(QParse::SESSION_TOKEN, mToken);
         QtPropertySerializer::deserialize(mUser, json.toVariantMap());
-        qDebug() << mUser->username() << mUser->email() << mUser->objectId() << mUser->updatedAt();
+        qDebug() << *mUser;
         mIsSignedIn = true;
         mIsAuthenticating = false;
         emit signedInChanged(true);

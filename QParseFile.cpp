@@ -39,21 +39,15 @@ void QParseFile::upload(const QString& filePath)
 {
     auto *fileManager = QParseFileManager::getInstance();
     fileManager->upload(filePath);
-    // TODO: connect to uploadFinished
-    connect(fileManager, &QParseFileManager::uploadFinished, [&](QParseFile *file){
-        mName = file->name();
-        mUrl = file->url();
-        emit uploadFinished();
-    });
+    // TODO: progress
+    connect(fileManager, &QParseFileManager::uploadFinished, this, &QParseFile::updateFileInfos, Qt::UniqueConnection);
 }
 
 void QParseFile::remove()
 {
     auto fileManager = QParseFileManager::getInstance();
     fileManager->remove(*this);
-    connect(fileManager, &QParseFileManager::removeFinished, [&](){
-        emit removed();
-    });
+    connect(fileManager, &QParseFileManager::removeFinished, this, &QParseFile::removed, Qt::UniqueConnection);
 }
 
 
@@ -78,13 +72,15 @@ void QParseFile::setUrl(const QUrl &url)
     mUrl = url;
 }
 
+void QParseFile::updateFileInfos(QParseFile *file)
+{
+    mName = file->name();
+    mUrl = file->url();
+    emit uploadFinished();
+}
+
 void QParseFile::upload(const QString &name, const QByteArray data) {
     auto *fileManager = QParseFileManager::getInstance();
     fileManager->upload(name, data);
-    // TODO: connect to uploadFinished
-    connect(fileManager, &QParseFileManager::uploadFinished, [&](QParseFile *file){
-        mName = file->name();
-        mUrl = file->url();
-        emit uploadFinished();
-    });
+    connect(fileManager, &QParseFileManager::uploadFinished, this, &QParseFile::updateFileInfos, Qt::UniqueConnection);
 }
