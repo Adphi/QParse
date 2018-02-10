@@ -22,29 +22,46 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += $$PWD/QParseInstance \
+	    $$PWD/QParseAuth \
+	    $$PWD/QParseFile \
+	    $$PWD/QParseObject \
+	    $$PWD/QParseQuery \
+	    $$PWD/QParseSerialize \
+	    $$PWD/QParseUser
+
+VPATH += $$PWD/QParseInstance \
+	    $$PWD/QParseAuth \
+	    $$PWD/QParseFile \
+	    $$PWD/QParseObject \
+	    $$PWD/QParseQuery \
+	    $$PWD/QParseSerialize \
+	    $$PWD/QParseUser
+
 SOURCES += \
-	$$PWD/QParse.cpp \
-    $$PWD/QParseFile.cpp \
-    $$PWD/QParseAuth.cpp \
-    $$PWD/QParseObject.cpp \
-    $$PWD/QtPropertySerializer.cpp \
-    $$PWD/QParseUser.cpp \
-    $$PWD/QParseFileManager.cpp \
-    $$PWD/QParseObjectManager.cpp \
-    $$PWD/QParseQuery.cpp
+	QParse.cpp \
+    QParseFile.cpp \
+    QParseAuth.cpp \
+    QParseUser.cpp \
+    QParseFileManager.cpp \
+    QParseObjectManager.cpp \
+    QParseQuery.cpp \
+    QParseObject.cpp \
+    QtPropertySerializer.cpp \
+    QParseJsonSerializer.cpp \
 
 HEADERS += \
-	$$PWD/QParse.h \
-	$$PWD/qparse_global.h \
-    $$PWD/QParseFile.h \
-    $$PWD/QParseAuth.h \
-    $$PWD/QParseObject.h \
-    $$PWD/Utils.h \
-    $$PWD/QtPropertySerializer.h \
-    $$PWD/QParseUser.h \
-    $$PWD/QParseFileManager.h \
-    $$PWD/QParseObjectManager.h \
-    $$PWD/QParseQuery.h
+	QParse.h \
+	qparse_global.h \
+    QParseFile.h \
+    QParseAuth.h \
+    QParseUser.h \
+    QParseFileManager.h \
+    QParseObjectManager.h \
+    QParseQuery.h \
+    QParseObject.h \
+    QtPropertySerializer.h \
+    QParseJsonSerializer.h \
 
 unix {
     target.path = /usr/lib

@@ -21,15 +21,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
 #include "QParseObjectManager.h"
-#include <QParse.h>
+
 #include <QNetworkReply>
-#include <QtPropertySerializer.h>
 #include <QVariantMap>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMimeDatabase>
+
+#include <QParse.h>
 #include <QParseAuth.h>
-#include "CustomObject.h"
+
+#include <QtPropertySerializer.h>
+#include <QParseJsonSerializer.h>
 
 QByteArray QParseObjectManager::OBJECT = "/classes";
 
@@ -78,7 +81,7 @@ void QParseObjectManager::save(QParseObject *object)
         const QJsonObject json = doc.object();
         //QtPropertySerializer::deserialize(object, json.toVariantMap());
 //        object->deserialize(json);
-
+        QParseJsonSerializer::jsonDeserialize(json, object);
         // TODO: deserialize
         reply->deleteLater();
         qDebug() << "Object saved" << *object;
@@ -113,6 +116,7 @@ void QParseObjectManager::update(QParseObject *object)
         // TODO: deserialize
         QtPropertySerializer::deserialize(object, json.toVariantMap());
 //        object->deserialize(json);
+
         reply->deleteLater();
         qDebug() << "Object Updated" << *object;
         emit updated(object);

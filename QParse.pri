@@ -10,27 +10,43 @@ INCLUDEPATH ''= $$system(pwd)
 DEPENDSPATH ''= $$system(pwd)
 include($$PWD/external/qtpromise/qtpromise.pri)
 
+INCLUDEPATH += $$PWD/QParseInstance \
+	    $$PWD/QParseAuth \
+	    $$PWD/QParseFile \
+	    $$PWD/QParseObject \
+	    $$PWD/QParseQuery \
+	    $$PWD/QParseSerialize \
+	    $$PWD/QParseUser
+
+VPATH += $$PWD/QParseInstance \
+	    $$PWD/QParseAuth \
+	    $$PWD/QParseFile \
+	    $$PWD/QParseObject \
+	    $$PWD/QParseQuery \
+	    $$PWD/QParseSerialize \
+	    $$PWD/QParseUser
 
 SOURCES += \
-	$$PWD/QParse.cpp \
-    $$PWD/QParseFile.cpp \
-    $$PWD/QParseAuth.cpp \
-    $$PWD/QtPropertySerializer.cpp \
-    $$PWD/QParseUser.cpp \
-    $$PWD/QParseFileManager.cpp \
-    $$PWD/QParseObjectManager.cpp \
-    $$PWD/QParseQuery.cpp \
-    $$PWD/QParseObject.cpp
+	QParse.cpp \
+    QParseFile.cpp \
+    QParseAuth.cpp \
+    QParseUser.cpp \
+    QParseFileManager.cpp \
+    QParseObjectManager.cpp \
+    QParseQuery.cpp \
+    QParseObject.cpp \
+    QtPropertySerializer.cpp \
+    QParseJsonSerializer.cpp \
 
 HEADERS += \
-	$$PWD/QParse.h \
-	$$PWD/qparse_global.h \
-    $$PWD/QParseFile.h \
-    $$PWD/QParseAuth.h \
-    $$PWD/Utils.h \
-    $$PWD/QtPropertySerializer.h \
-    $$PWD/QParseUser.h \
-    $$PWD/QParseFileManager.h \
-    $$PWD/QParseObjectManager.h \
-    $$PWD/QParseQuery.h \
-    $$PWD/QParseObject.h
+	QParse.h \
+	qparse_global.h \
+    QParseFile.h \
+    QParseAuth.h \
+    QParseUser.h \
+    QParseFileManager.h \
+    QParseObjectManager.h \
+    QParseQuery.h \
+    QParseObject.h \
+    QtPropertySerializer.h \
+    QParseJsonSerializer.h \

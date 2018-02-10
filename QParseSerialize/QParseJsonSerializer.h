@@ -1,8 +1,8 @@
 /*****************************************************************************
  *
- * Utils.h
+ * Serializer.h
  *
- * Created: 20 2018 by Philippe-Adrien
+ * Created: 27 2018 by Philippe-Adrien
  *
  * Copyright 2018 Philippe-Adrien. All rights reserved.
  *
@@ -20,32 +20,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef QPARSEJSONSERIALIZER_H
+#define QPARSEJSONSERIALIZER_H
 
-#include <QDebug>
+#include <QObject>
+
+#include <QMetaObject>
+#include <QMetaType>
 #include <QMetaProperty>
 
-#include <vector>
-#include <utility>
-#include <algorithm>
+#include <QVariant>
+#include <QVariantList>
+#include <QVariantMap>
+#include <QSequentialIterable>
 
-static void dump_props(QObject *o)
-{
-  auto mo = o->metaObject();
-  qDebug() << "## Properties of" << o << "##";
-  do {
-    qDebug() << "### Class" << mo->className() << "###";
-    std::vector<std::pair<QString, QVariant> > v;
-    v.reserve(mo->propertyCount() - mo->propertyOffset());
-    for (int i = mo->propertyOffset(); i < mo->propertyCount();
-          ++i)
-      v.emplace_back(mo->property(i).name(),
-                     mo->property(i).read(o));
-    std::sort(v.begin(), v.end());
-    for (auto &i : v)
-      qDebug() << i.first << "=>" << i.second;
-  } while ((mo = mo->superClass()));
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+
+#include <QRegularExpression>
+#include <QDebug>
+
+namespace QParseJsonSerializer {
+
+QJsonObject jsonSerialize(QObject *data);
+
+
+QObject* jsonDeserialize(const QJsonObject& json, QObject *object);
+
+QObject* jsonDeserialize(const QJsonObject& json, const QString& className);
+
+QVariantMap serialize(QObject *data);
+
+QString getTypeName(QString propertyName, QObject* object);
+
+template <typename T, typename std::enable_if<std::is_base_of<QObject, T>::value>::type* = nullptr>
+T* deserialize(const QVariantMap& data, T *object);
+
 }
 
-#endif // UTILS_H
+#endif // QPARSEJSONSERIALIZER_H
