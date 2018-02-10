@@ -91,6 +91,14 @@ void QParseFileManager::upload(const QString &name, const QByteArray &data) cons
     request.setHeader(QNetworkRequest::ContentTypeHeader, db.mimeTypeForUrl(QUrl(name)).name());
     qDebug() << "Sending File" << name << "(type:" << db.mimeTypeForUrl(QUrl(name)).name() <<")" << data.size() << "bytes";
     auto reply = mManager->post(request, data);
+
+    // Upload Progress
+    connect(reply, &QNetworkReply::uploadProgress, [&, reply](qint64 bytesSent, qint64 bytesTotal){
+        if( ! bytesSent || ! bytesTotal) return;
+        qDebug() << "Upload" << ((double)bytesSent / (double) bytesTotal * 100) << "%";
+    });
+
+    // Upload Finished
     connect(reply, &QNetworkReply::finished, [&, reply]() {
         if(reply->error()) {
             qDebug() << reply->errorString();

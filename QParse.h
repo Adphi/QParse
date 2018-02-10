@@ -29,6 +29,7 @@
 #include <QSettings>
 #include <QException>
 #include <QNetworkRequest>
+#include <QNetworkConfigurationManager>
 #include <QDebug>
 
 /**
@@ -61,7 +62,10 @@ public:
     QByteArray masterKey() const;
     void setMasterKey(const QByteArray &masterKey);
 
+    bool connected() const;
+
 signals:
+    void onlineStateChanged(bool connected);
 
 public slots:
 
@@ -71,6 +75,8 @@ private:
     Q_DISABLE_COPY(QParse)
     static QParse* sInstance;
 
+    bool mConnected = false;
+
     QSettings* mSettings;
 
     QByteArray mUrl;
@@ -78,6 +84,10 @@ private:
     QByteArray mApiKey;
     QByteArray mMasterKey;
     bool mRevocableSession;
+
+    QNetworkConfigurationManager mNetworkConfig;
+
+    void init();
 };
 
 class QParseInitializeException : public QException

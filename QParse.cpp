@@ -59,13 +59,28 @@ QParse* QParse::getInstance()
 
 QParse::QParse(QObject *parent) : QObject(parent)
 {
-
+    init();
 }
 
 QParse::QParse(const QByteArray &url, const QByteArray &appId, const QByteArray &apiKey, QObject *parent) :
-    QObject(parent), mUrl(url), mAppId(appId), mApiKey(apiKey)
+    QObject(parent), mUrl(url), mAppId(appId), mApiKey(apiKey), mSettings(new QSettings(this))
 {
-    mSettings = new QSettings(this);
+    init();
+}
+
+void QParse::init()
+{
+    auto configurations = mNetworkConfig.allConfigurations(QNetworkConfiguration::Active);
+    mConnected = configurations.size() > 0;
+    connect(&mNetworkConfig, &QNetworkConfigurationManager::onlineStateChanged, [&](bool connected){
+        mConnected = connected;
+        emit onlineStateChanged(connected);
+    });
+}
+
+bool QParse::connected() const
+{
+    return mConnected;
 }
 
 QByteArray QParse::masterKey() const
