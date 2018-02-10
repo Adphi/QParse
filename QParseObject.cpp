@@ -20,35 +20,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *****************************************************************************/
-#include "QAbstractParseObject.h"
+#include "QParseObject.h"
 #include "QParseObjectManager.h"
 #include <QDebug>
 
-QAbstractParseObject::QAbstractParseObject(QObject *parent) : QObject(parent)
+QParseObject::QParseObject(QObject *parent) : QObject(parent)
 {
     qDebug() << "Creating QAbstractParseObject";
 }
 
-void QAbstractParseObject::save()
+void QParseObject::save()
 {
     auto manager = QParseObjectManager::getInstance();
     manager->save(this);
-    connect(manager, SIGNAL(saved(QAbstractParseObject*)),
+    connect(manager, SIGNAL(saved(QParseObject*)),
             this, SIGNAL(saved()),
             Qt::UniqueConnection);
 }
 
-void QAbstractParseObject::update()
+void QParseObject::update()
 {
     auto manager = QParseObjectManager::getInstance();
     manager->update(this);
-    connect(manager, SIGNAL(updated(QAbstractParseObject*)),
+    connect(manager, SIGNAL(updated(QParseObject*)),
             this, SIGNAL(updated()),
             Qt::UniqueConnection);
 
 }
 
-void QAbstractParseObject::remove()
+void QParseObject::remove()
 {
     auto manager = QParseObjectManager::getInstance();
     manager->remove(this);
@@ -57,40 +57,40 @@ void QAbstractParseObject::remove()
             Qt::UniqueConnection);
 }
 
-QJsonObject QAbstractParseObject::serialize() const
-{
-    QJsonObject json = serialize_impl();
-    //json["objectId"] = mObjectId;
-    if(!mUpdatedAt.isNull())
-        json["updatedAt"] = QJsonObject {
-            {"__type", "Date"},
-            {"iso", mUpdatedAt.toString(Qt::ISODate)}
-    };
-    if(!mCreatedAt.isNull())
-        json["createdAt"] = QJsonObject {
-        {"__type", "Date"},
-        {"iso", mCreatedAt.toString(Qt::ISODate)}
-    };
-    return json;
-}
+//QJsonObject QParseObject::serialize() const
+//{
+//    QJsonObject json = serialize_impl();
+//    //json["objectId"] = mObjectId;
+//    if(!mUpdatedAt.isNull())
+//        json["updatedAt"] = QJsonObject {
+//            {"__type", "Date"},
+//            {"iso", mUpdatedAt.toString(Qt::ISODate)}
+//    };
+//    if(!mCreatedAt.isNull())
+//        json["createdAt"] = QJsonObject {
+//        {"__type", "Date"},
+//        {"iso", mCreatedAt.toString(Qt::ISODate)}
+//    };
+//    return json;
+//}
 
-void QAbstractParseObject::deserialize(const QJsonObject &json)
-{
-    deserialize_impl(json);
-    if(json.contains("objectId"))
-        mObjectId = json["objectId"].toString();
-    if(json.contains("createdAt"))
-        mCreatedAt = QDateTime::fromString(json["createdAt"].toString(), Qt::ISODate);
-    if(json.contains("updatedAt"))
-        mUpdatedAt = QDateTime::fromString(json["updatedAt"].toString(), Qt::ISODate);
-}
+//void QParseObject::deserialize(const QJsonObject &json)
+//{
+//    deserialize_impl(json);
+//    if(json.contains("objectId"))
+//        mObjectId = json["objectId"].toString();
+//    if(json.contains("createdAt"))
+//        mCreatedAt = QDateTime::fromString(json["createdAt"].toString(), Qt::ISODate);
+//    if(json.contains("updatedAt"))
+//        mUpdatedAt = QDateTime::fromString(json["updatedAt"].toString(), Qt::ISODate);
+//}
 
-QString QAbstractParseObject::objectId() const
+QString QParseObject::objectId() const
 {
     return mObjectId;
 }
 
-void QAbstractParseObject::setObjectId(const QString &objectId)
+void QParseObject::setObjectId(const QString &objectId)
 {
     if(objectId != mObjectId) {
         mObjectId = objectId;
@@ -98,12 +98,12 @@ void QAbstractParseObject::setObjectId(const QString &objectId)
     }
 }
 
-QDateTime QAbstractParseObject::updatedAt() const
+QDateTime QParseObject::updatedAt() const
 {
     return mUpdatedAt;
 }
 
-void QAbstractParseObject::setUpdatedAt(const QDateTime &updatedAt)
+void QParseObject::setUpdatedAt(const QDateTime &updatedAt)
 {
     if(mUpdatedAt != updatedAt) {
         mUpdatedAt = updatedAt;
@@ -111,12 +111,12 @@ void QAbstractParseObject::setUpdatedAt(const QDateTime &updatedAt)
     }
 }
 
-QDateTime QAbstractParseObject::createdAt() const
+QDateTime QParseObject::createdAt() const
 {
     return mCreatedAt;
 }
 
-void QAbstractParseObject::setCreatedAt(const QDateTime &createdAt)
+void QParseObject::setCreatedAt(const QDateTime &createdAt)
 {
     if(mCreatedAt != createdAt) {
         mCreatedAt = createdAt;
@@ -132,7 +132,7 @@ void QAbstractParseObject::setCreatedAt(const QDateTime &createdAt)
 //    object->mObjectId = jsonObject["objectId"].toString();
 //    return object;
 //}
-QDebug operator<<(QDebug debug, const QAbstractParseObject &o)
+QDebug operator<<(QDebug debug, const QParseObject &o)
 {
     QDebugStateSaver saver(debug);
     debug.nospace() << '('

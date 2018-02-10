@@ -24,7 +24,7 @@
 #define QPARSEQUERY_H
 
 #include <QObject>
-#include <QAbstractParseObject.h>
+#include <QParseObject.h>
 
 //template <typename T, typename std::enable_if<std::is_base_of<QAbstractParseObject, T>::value>::type* = nullptr>
 class QParseQuery : public QObject

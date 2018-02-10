@@ -15,22 +15,22 @@ SOURCES += \
 	$$PWD/QParse.cpp \
     $$PWD/QParseFile.cpp \
     $$PWD/QParseAuth.cpp \
-    $$PWD/QAbstractParseObject.cpp \
     $$PWD/QtPropertySerializer.cpp \
     $$PWD/QParseUser.cpp \
     $$PWD/QParseFileManager.cpp \
     $$PWD/QParseObjectManager.cpp \
-    $$PWD/QParseQuery.cpp
+    $$PWD/QParseQuery.cpp \
+    $$PWD/QParseObject.cpp
 
 HEADERS += \
 	$$PWD/QParse.h \
 	$$PWD/qparse_global.h \
     $$PWD/QParseFile.h \
     $$PWD/QParseAuth.h \
-    $$PWD/QAbstractParseObject.h \
     $$PWD/Utils.h \
     $$PWD/QtPropertySerializer.h \
     $$PWD/QParseUser.h \
     $$PWD/QParseFileManager.h \
     $$PWD/QParseObjectManager.h \
-    $$PWD/QParseQuery.h
+    $$PWD/QParseQuery.h \
+    $$PWD/QParseObject.h

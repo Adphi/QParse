@@ -48,19 +48,22 @@ QParseObjectManager *QParseObjectManager::getInstance()
     return sInstance;
 }
 
-void QParseObjectManager::save(QAbstractParseObject *object)
+void QParseObjectManager::save(QParseObject *object)
 {
     if( !object->objectId().isEmpty()) {
         qDebug() << "Object already saved. Calling update() instead";
         object->update();
         return;
     }
-    auto objectData = QJsonDocument(object->serialize());
+
+//    auto objectData = QJsonDocument(object->serialize());
+
     QString className = object->metaObject()->className();
     auto request = QParse::getInstance()->request(OBJECT + "/" + className.toUtf8());
     request.setRawHeader(QParse::SESSION_TOKEN, QParseAuth::getInstance()->token().toUtf8());
-    //QVariantMap data = QtPropertySerializer::serialize(object);
-    //auto objectData = QJsonDocument::fromVariant(data);
+    // TODO serialize
+    QVariantMap data = QtPropertySerializer::serialize(object);
+    auto objectData = QJsonDocument::fromVariant(data);
     qDebug() << objectData;
     QMimeDatabase db;
     request.setHeader(QNetworkRequest::ContentTypeHeader, db.mimeTypeForData(objectData.toBinaryData()).name());
@@ -74,20 +77,24 @@ void QParseObjectManager::save(QAbstractParseObject *object)
         QJsonDocument doc = QJsonDocument::fromJson(QString(reply->readAll()).toUtf8());
         const QJsonObject json = doc.object();
         //QtPropertySerializer::deserialize(object, json.toVariantMap());
-        object->deserialize(json);
+//        object->deserialize(json);
+
+        // TODO: deserialize
         reply->deleteLater();
         qDebug() << "Object saved" << *object;
         emit saved(object);
     });
 }
 
-void QParseObjectManager::update(QAbstractParseObject *object)
+void QParseObjectManager::update(QParseObject *object)
 {
     QString className = object->metaObject()->className();
     auto request = QParse::getInstance()->request(OBJECT + "/" + className.toUtf8() + "/" + object->objectId().toUtf8());
     request.setRawHeader(QParse::SESSION_TOKEN, QParseAuth::getInstance()->token().toUtf8());
-    //QVariantMap data = QtPropertySerializer::serialize(object);
-    auto data = object->serialize();
+
+    // TODO: serialize
+//    auto data = object->serialize();
+    QVariantMap data = QtPropertySerializer::serialize(object);
     auto objectData = QJsonDocument::fromVariant(data);
 
     QMimeDatabase db;
@@ -102,15 +109,17 @@ void QParseObjectManager::update(QAbstractParseObject *object)
         QJsonDocument doc = QJsonDocument::fromJson(QString(reply->readAll()).toUtf8());
         const QJsonObject json = doc.object();
         qDebug() << json;
-        //QtPropertySerializer::deserialize(object, json.toVariantMap());
-        object->deserialize(json);
+
+        // TODO: deserialize
+        QtPropertySerializer::deserialize(object, json.toVariantMap());
+//        object->deserialize(json);
         reply->deleteLater();
         qDebug() << "Object Updated" << *object;
         emit updated(object);
     });
 }
 
-void QParseObjectManager::remove(QAbstractParseObject *object)
+void QParseObjectManager::remove(QParseObject *object)
 {
     QString className = object->metaObject()->className();
     QString id = object->objectId();

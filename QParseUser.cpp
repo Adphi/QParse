@@ -22,35 +22,35 @@
  *****************************************************************************/
 #include "QParseUser.h"
 
-QParseUser::QParseUser(QObject *parent) : QAbstractParseObject(parent)
+QParseUser::QParseUser(QObject *parent) : QParseObject(parent)
 {
 
 }
 
 QParseUser::QParseUser(const QString &username, const QString &email, const QString &phone, QObject *parent)
-    : QAbstractParseObject(parent), mUsername(username), mEmail(email), mPhone(phone)
+    : QParseObject(parent), mUsername(username), mEmail(email), mPhone(phone)
 {
 
 }
 
-QJsonObject QParseUser::serialize_impl() const
-{
-    QJsonObject json;
-    json["username"] = mUsername;
-    json["email"] = mEmail;
-    json["phone"] = mPhone;
-    return json;
-}
+//QJsonObject QParseUser::serialize_impl() const
+//{
+//    QJsonObject json;
+//    json["username"] = mUsername;
+//    json["email"] = mEmail;
+//    json["phone"] = mPhone;
+//    return json;
+//}
 
-void QParseUser::deserialize_impl(const QJsonObject &json)
-{
-    if(json.contains("username"))
-        mUsername = json["username"].toString();
-    if(json.contains("email"))
-        mEmail = json["email"].toString();
-    if(json.contains("phone"))
-        mPhone = json["phone"].toString();
-}
+//void QParseUser::deserialize_impl(const QJsonObject &json)
+//{
+//    if(json.contains("username"))
+//        mUsername = json["username"].toString();
+//    if(json.contains("email"))
+//        mEmail = json["email"].toString();
+//    if(json.contains("phone"))
+//        mPhone = json["phone"].toString();
+//}
 
 QString QParseUser::username() const
 {

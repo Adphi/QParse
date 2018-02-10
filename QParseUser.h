@@ -23,13 +23,13 @@
 #ifndef QPARSETEST_H
 #define QPARSETEST_H
 
-#include <QAbstractParseObject.h>
+#include <QParseObject.h>
 #include <QDebug>
 
 /**
  * @brief The QParseUser class
  */
-class QParseUser : public QAbstractParseObject
+class QParseUser : public QParseObject
 {
     Q_OBJECT
     Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged)
@@ -61,8 +61,8 @@ private:
     QString mEmail;
     QString mPhone;
 
-    virtual QJsonObject serialize_impl() const override;
-    virtual void deserialize_impl(const QJsonObject &json) override;
+//    virtual QJsonObject serialize_impl() const override;
+//    virtual void deserialize_impl(const QJsonObject &json) override;
 };
 QDebug operator<<(QDebug debug, const QParseUser &u);
 #endif // QPARSETEST_H

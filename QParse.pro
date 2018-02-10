@@ -26,7 +26,7 @@ SOURCES += \
 	$$PWD/QParse.cpp \
     $$PWD/QParseFile.cpp \
     $$PWD/QParseAuth.cpp \
-    $$PWD/QAbstractParseObject.cpp \
+    $$PWD/QParseObject.cpp \
     $$PWD/QtPropertySerializer.cpp \
     $$PWD/QParseUser.cpp \
     $$PWD/QParseFileManager.cpp \
@@ -38,7 +38,7 @@ HEADERS += \
 	$$PWD/qparse_global.h \
     $$PWD/QParseFile.h \
     $$PWD/QParseAuth.h \
-    $$PWD/QAbstractParseObject.h \
+    $$PWD/QParseObject.h \
     $$PWD/Utils.h \
     $$PWD/QtPropertySerializer.h \
     $$PWD/QParseUser.h \

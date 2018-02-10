@@ -27,7 +27,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 
-#include <QAbstractParseObject.h>
+#include <QParseObject.h>
 #include <QParse.h>
 #include <QParseUser.h>
 
